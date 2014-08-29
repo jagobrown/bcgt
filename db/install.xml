@@ -1,0 +1,1936 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/bcgt/db" VERSION="20140731" COMMENT="XMLDB file for Moodle blocks/bcgt"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_bcgt" COMMENT="comment">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="This is the course id were the block exists"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="This is the full name of the instance"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course-index" UNIQUE="false" FIELDS="course" COMMENT="The course index"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_level" COMMENT="block_bcgt_level holds the level information and names">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="trackinglevel" TYPE="char" LENGTH="250" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="trackinglevel-ind" UNIQUE="true" FIELDS="trackinglevel"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_subtype" COMMENT="block_bcgt_subtype holds the subtypes used in all qualifications">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subtype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subtypeshort" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="subtype-ind" UNIQUE="false" FIELDS="subtype"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_type_family" COMMENT="block_bcgt_type_family holds the families of the qual types">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="family" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="classfolderlocation" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="This is where the class can be found. The class will assume to be called {family}Qualification, where family is the name in the database. So for example BTECQualification will be the class. The class file location needs to be from Moodle. So for example &quot;/mod/bcgtbtec/classes/BTECQualification.class.php&quot;"/>
+        <FIELD NAME="pluginname" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="This is the plugin name and folder name in the plugins directory"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="family-ind" UNIQUE="false" FIELDS="family"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_pathway_type" COMMENT="block_bcgt_pathway_type holds the link between pathways and types">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pathwaytype" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pathwaytype-ind" UNIQUE="true" FIELDS="pathwaytype"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_pathway_dep" COMMENT="block_bcgt_pathway_dep holds the information that links pathways to departments for CG quals">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="pathway" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypefamilyid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypefamilyid-fk" TYPE="foreign" FIELDS="bcgttypefamilyid" REFTABLE="block_bcgt_type_family" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pathway" UNIQUE="true" FIELDS="pathway"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_pathway_dep_type" COMMENT="block_bcgt_pathway_dep_type holds the information that links department, type and pathway for CG quals">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtpathwaydepid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtpathwaytypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtpathwaytypeid-fk" TYPE="foreign" FIELDS="bcgtpathwaytypeid" REFTABLE="block_bcgt_pathway_type" REFFIELDS="id"/>
+        <KEY NAME="bcgtpathwaydepid-fk" TYPE="foreign" FIELDS="bcgtpathwaydepid" REFTABLE="block_bcgt_pathway_dep" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_pathway_subtype" COMMENT="block_bcgt_pathway_subtype holds the information that links the pathway and subtype for a city and guild qual">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtsubtypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtpathwaydeptypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtsubtypeid-fk" TYPE="foreign" FIELDS="bcgtsubtypeid" REFTABLE="block_bcgt_subtype" REFFIELDS="id"/>
+        <KEY NAME="bcgtpathwaydeptypeid-fk" TYPE="foreign" FIELDS="bcgtpathwaydeptypeid" REFTABLE="block_bcgt_pathway_dep_type" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_type" COMMENT="block_bcgt_type holds the types of qualifications">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypefamilyid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtpathwaydeptid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtpathwaytypeid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="specificationdesc" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The name from the specifications"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypefamilyid-fk" TYPE="foreign" FIELDS="bcgttypefamilyid" REFTABLE="block_bcgt_type_family" REFFIELDS="id"/>
+        <KEY NAME="bcgtpathwaydeptid-fk" TYPE="foreign" FIELDS="bcgtpathwaydeptid" REFTABLE="block_bcgt_pathway_dep" REFFIELDS="id"/>
+        <KEY NAME="bcgtpathwaytypeid-fk" TYPE="foreign" FIELDS="bcgtpathwaytypeid" REFTABLE="block_bcgt_pathway_type" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="type-ind" UNIQUE="false" FIELDS="type"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_type_attributes" COMMENT="block_bcgt_type_attributes attributes associated with the types">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeid-fk" TYPE="foreign" FIELDS="bcgttypeid" REFTABLE="block_bcgt_type" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="bcgttypeid-name-ind" UNIQUE="false" FIELDS="bcgttypeid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_fam_parent_type" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtfamilyid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtfamilyid-fk" TYPE="foreign-unique" FIELDS="bcgtfamilyid" REFTABLE="block_bcgt_type_family" REFFIELDS="id"/>
+        <KEY NAME="bcgttypeid-fk" TYPE="foreign-unique" FIELDS="bcgttypeid" REFTABLE="block_bcgt_type" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_target_qual" COMMENT="block_bcgt_target_qual links the type, subtype and level">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtlevelid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtsubtypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="previoustargetqualid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtlevelid-fk" TYPE="foreign" FIELDS="bcgtlevelid" REFTABLE="block_bcgt_level" REFFIELDS="id"/>
+        <KEY NAME="bcgttypeid-fk" TYPE="foreign" FIELDS="bcgttypeid" REFTABLE="block_bcgt_type" REFFIELDS="id"/>
+        <KEY NAME="bcgtsubtypeid-fk" TYPE="foreign" FIELDS="bcgtsubtypeid" REFTABLE="block_bcgt_subtype" REFFIELDS="id"/>
+        <KEY NAME="previoustargetqualid-fk" TYPE="foreign" FIELDS="previoustargetqualid" REFTABLE="block_bcgt_target_qual" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgtlevelid-bcgttypeid-ind" UNIQUE="false" FIELDS="bcgtlevelid, bcgttypeid"/>
+        <INDEX NAME="bcgtlevelid-bcgtsubtypeid-ind" UNIQUE="false" FIELDS="bcgtlevelid, bcgtsubtypeid"/>
+        <INDEX NAME="bcgttypeid-bcgtsubtypeid-ind" UNIQUE="false" FIELDS="bcgttypeid, bcgtsubtypeid"/>
+        <INDEX NAME="bcgttypeid-bcgtsubtypeid-bcgtlevelid-ind" UNIQUE="true" FIELDS="bcgttypeid, bcgtsubtypeid, bcgtlevelid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_qualification" COMMENT="block_bcgt_qualification holds the qualification basic info">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttargetqualid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="credits" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="code" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="previousqualid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="additionalname" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="noyears" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pathwaytypeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttargetqualid-fk" TYPE="foreign" FIELDS="bcgttargetqualid" REFTABLE="block_bcgt_target_qual" REFFIELDS="id"/>
+        <KEY NAME="previousqualid" TYPE="foreign" FIELDS="previousqualid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="code-ind" UNIQUE="false" FIELDS="code"/>
+        <INDEX NAME="name-code-ind" UNIQUE="false" FIELDS="name, code"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_qualification_his" COMMENT="block_bcgt_qualification_his holds the history of the qualification changes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetqualid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="credits" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="code" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="previousqualid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="additionalname" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="noyears" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pathwaytypeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="code-ind" UNIQUE="false" FIELDS="code"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_qual_attributes" COMMENT="block_bcgt_qual_attributes holds the atributes for the qualification">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="attribute" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="attribute-ind" UNIQUE="false" FIELDS="attribute"/>
+        <INDEX NAME="userid-attribute-ind" UNIQUE="false" FIELDS="userid, attribute"/>
+        <INDEX NAME="bcgtqualificationid-userid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, userid"/>
+        <INDEX NAME="bcgtqualificationid-userid-attribute-ind" UNIQUE="true" FIELDS="bcgtqualificationid, userid, attribute"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_type_award" COMMENT="block_bcgt_type_award award associated with the different types">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="award" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ranking" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pointslower" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="pointsupper" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="shortaward" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeid-fk" TYPE="foreign" FIELDS="bcgttypeid" REFTABLE="block_bcgt_type" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="award-ind" UNIQUE="false" FIELDS="award"/>
+        <INDEX NAME="bcgttypeid-pointslower-pointsupper-fk" UNIQUE="false" FIELDS="bcgttypeid, pointslower, pointsupper"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_type" COMMENT="block_bcgt_unit_type holds the type that each unit is">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeid-fk" TYPE="foreign" FIELDS="bcgttypeid" REFTABLE="block_bcgt_type" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="type-id" UNIQUE="false" FIELDS="type"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit" COMMENT="block_bcgt_unit holds the actual unit information">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="uniqueid" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="250" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="credits" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="weighting" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtlevelid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunittypeid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="aestheticname" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="Unit" SEQUENCE="false"/>
+        <FIELD NAME="pathwaytypeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="specificawardtype" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeid-fk" TYPE="foreign" FIELDS="bcgttypeid" REFTABLE="block_bcgt_type" REFFIELDS="id"/>
+        <KEY NAME="bcgtlevelid" TYPE="foreign" FIELDS="bcgtlevelid" REFTABLE="block_bcgt_level" REFFIELDS="id"/>
+        <KEY NAME="bcgtunittypeid-fk" TYPE="foreign" FIELDS="bcgtunittypeid" REFTABLE="block_bcgt_unit_type" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="uniqueid-ind" UNIQUE="false" FIELDS="uniqueid"/>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="uniqueid-name-ind" UNIQUE="false" FIELDS="uniqueid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_history" COMMENT="block_bcgt_unit_history holds the history of the units">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtunitsid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="uniqueid" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="250" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="credits" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="weighting" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtlevelid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunittypeid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="aestheticname" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="Unit" SEQUENCE="false"/>
+        <FIELD NAME="specificawardtype" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pathwaytypeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="uniqueid-ind" UNIQUE="false" FIELDS="uniqueid"/>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="uniqueid-name-ind" UNIQUE="false" FIELDS="uniqueid, name"/>
+        <INDEX NAME="bcgtunitsid-ind" UNIQUE="false" FIELDS="bcgtunitsid"/>
+        <INDEX NAME="bcglevelid-ind" UNIQUE="false" FIELDS="bcgtlevelid"/>
+        <INDEX NAME="bcgttypeid-ind" UNIQUE="false" FIELDS="bcgttypeid"/>
+        <INDEX NAME="bcgtunittypeid-ind" UNIQUE="false" FIELDS="bcgtunittypeid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_attributes" COMMENT="block_bcgt_unit_attributes holds the attributes on the units">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="attribute" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="bcgtunitid-userid-attribute-ind" UNIQUE="true" FIELDS="bcgtunitid, userid, attribute"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_award" COMMENT="block_bcgt_unit_award holds the awards that are given to each unit">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pointslower" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="pointsupper" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeawardid-fk" TYPE="foreign" FIELDS="bcgttypeawardid" REFTABLE="block_bcgt_type_award" REFFIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pointslower-ind" UNIQUE="false" FIELDS="pointslower"/>
+        <INDEX NAME="pointsupper-ind" UNIQUE="false" FIELDS="pointsupper"/>
+        <INDEX NAME="pointslower_pointsupper_typeaward" UNIQUE="false" FIELDS="pointslower, pointsupper, bcgttypeawardid"/>
+        <INDEX NAME="pointslower_pointsupper_unitid-ind" UNIQUE="false" FIELDS="pointslower, pointsupper, bcgtunitid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_points" COMMENT="block_bcgt_unit_points holds the points that each unit is worth">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtlevelid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="points" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtlevelid-fk" TYPE="foreign" FIELDS="bcgtlevelid" REFTABLE="block_bcgt_level" REFFIELDS="id"/>
+        <KEY NAME="bcgttypeawardid-fk" TYPE="foreign" FIELDS="bcgttypeawardid" REFTABLE="block_bcgt_type_award" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_range" COMMENT="block_bcgt_range holds the ranges for certain qualifications">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetdate" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_qual_units" COMMENT="block_bcgt_qual_units holds the units that are on the quals">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="groupname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+        <KEY NAME="bcgtunit-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgtqualification-bcgtunitid-fk" UNIQUE="true" FIELDS="bcgtqualificationid, bcgtunitid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_qual_units_his" COMMENT="block_bcgt_qual_units_his holds the history of the units on the quals">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtqualificationunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitsid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="groupname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgtqualid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="bcgtunitsid-ind" UNIQUE="false" FIELDS="bcgtunitsid"/>
+        <INDEX NAME="bcgtqualificationunitid-ind" UNIQUE="false" FIELDS="bcgtqualificationunitid"/>
+        <INDEX NAME="bcgtqualid_unitid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtunitsid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_criteria" COMMENT="block_bcgt_criteria holds the criteria information that go on units">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="225" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="parentcriteriaid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="targetdate" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="numofobservations" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="weighting" TYPE="number" LENGTH="4" NOTNULL="false" DEFAULT="1.0" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="ordernum" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="displayname" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeawardid-fk" TYPE="foreign" FIELDS="bcgttypeawardid" REFTABLE="block_bcgt_type_award" REFFIELDS="id"/>
+        <KEY NAME="parentcriteriaid" TYPE="foreign" FIELDS="parentcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="traccrit_tra_ix" UNIQUE="false" FIELDS="bcgtunitid"/>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="type-ind" UNIQUE="false" FIELDS="type"/>
+        <INDEX NAME="bcgtqualid_unitid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtunitid"/>
+        <INDEX NAME="bcgtunitid_name-ind" UNIQUE="false" FIELDS="bcgtunitid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_criteria_his" COMMENT="block_bcgt_criteria_his holds the history of the criteria">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="225" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="parentcriteriaid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="targetdate" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="numofobservations" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="weighting" TYPE="number" LENGTH="4" NOTNULL="false" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="ordernum" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="displayname" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="type-ind" UNIQUE="false" FIELDS="type"/>
+        <INDEX NAME="bcgtcriteriaid-ind" UNIQUE="false" FIELDS="bcgtcriteriaid"/>
+        <INDEX NAME="bcgtunitid-ind" UNIQUE="false" FIELDS="bcgtunitid"/>
+        <INDEX NAME="parentcriteriaid-ind" UNIQUE="false" FIELDS="parentcriteriaid"/>
+        <INDEX NAME="bcgtqualid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="bcgtqualid_unitid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtunitid"/>
+        <INDEX NAME="qualid_unitid_criteriaid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtunitid, bcgtcriteriaid"/>
+        <INDEX NAME="qualid_unitid_name" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtunitid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_criteria_att" COMMENT="block_bcgt_criteria_att holds the criteria attributes data">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="attribute" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="attribute-ind" UNIQUE="false" FIELDS="attribute"/>
+        <INDEX NAME="bcgtqualid_criteriaid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtcriteriaid"/>
+        <INDEX NAME="bcgtqualid_userid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, userid"/>
+        <INDEX NAME="bcgtqualid_userid_attribute-ind" UNIQUE="false" FIELDS="bcgtqualificationid, userid, attribute"/>
+        <INDEX NAME="bcgtqualid_criteriaid_userid_attribute" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtcriteriaid, userid, attribute"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_value" COMMENT="block_bcgt_value holds the values that can be given to the criteria">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shortvalue" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ranking" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="customvalue" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="customshortvalue" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="specialval" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="context" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetqualid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeid-fk" TYPE="foreign" FIELDS="bcgttypeid" REFTABLE="block_bcgt_type" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="value-ind" UNIQUE="false" FIELDS="value"/>
+        <INDEX NAME="shortvalue-ind" UNIQUE="false" FIELDS="shortvalue"/>
+        <INDEX NAME="bcgttypeid-shortvalue-ind" UNIQUE="false" FIELDS="bcgttypeid, shortvalue"/>
+        <INDEX NAME="bcgttargetqualid-ind" UNIQUE="false" FIELDS="bcgttargetqualid"/>
+        <INDEX NAME="bcgttypeid_value-ind" UNIQUE="false" FIELDS="bcgttypeid, value"/>
+        <INDEX NAME="bcgttargetqualid_shortvalue-ind" UNIQUE="false" FIELDS="bcgttargetqualid, shortvalue"/>
+        <INDEX NAME="bcgttargetqualid_value-ind" UNIQUE="false" FIELDS="bcgttargetqualid, value"/>
+        <INDEX NAME="ranking-ind" UNIQUE="false" FIELDS="ranking"/>
+        <INDEX NAME="bcgttypeid_ranking-ind" UNIQUE="false" FIELDS="bcgttypeid, ranking"/>
+        <INDEX NAME="bcgttargetqualid_ranking-ind" UNIQUE="false" FIELDS="bcgttargetqualid, ranking"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_value_settings" COMMENT="block_bcgt_value_settings holds the value setting data">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtvalueid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="coreimg" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="customimg" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="coreimglate" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="customimglate" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="value-ind" UNIQUE="false" FIELDS="bcgtvalueid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_qual" COMMENT="block_bcgt_user_qual holds the users qualification and comments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="5" NOTNULL="false" SEQUENCE="false" COMMENT="This is the role of the user, so student, teacher, tutor, manager etc"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="roleid-ind" UNIQUE="false" FIELDS="roleid"/>
+        <INDEX NAME="role_qualid-ind" UNIQUE="false" FIELDS="roleid, bcgtqualificationid"/>
+        <INDEX NAME="role_userid-ind" UNIQUE="false" FIELDS="roleid, userid"/>
+        <INDEX NAME="role_qualid_userid-ind" UNIQUE="false" FIELDS="roleid, bcgtqualificationid, userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_unit" COMMENT="block_bcgt_user_unit holds the users unit information">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateupdated" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userdefinedvalue" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtvalueid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="setbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateset" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="studentcomments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+        <KEY NAME="bcgttypeawardid-fk" TYPE="foreign" FIELDS="bcgttypeawardid" REFTABLE="block_bcgt_type_award" REFFIELDS="id"/>
+        <KEY NAME="bcgtvalueid-fk" TYPE="foreign" FIELDS="bcgtvalueid" REFTABLE="block_bcgt_value" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="bcgtqualificationid-userid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, userid"/>
+        <INDEX NAME="bcgtqualificationid-bcgtunitid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtunitid"/>
+        <INDEX NAME="userid-bcgtunitid-ind" UNIQUE="false" FIELDS="userid, bcgtunitid"/>
+        <INDEX NAME="bcgtqualificationid-userid-bcgtunitid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, userid, bcgtunitid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_unit_his" COMMENT="block_bcgt_user_unit_his holds the users unit history">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtuserunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateupdated" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userdefinedvalue" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtvalueid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="setbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateset" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="studentcomments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgtuserunitid-ind" UNIQUE="false" FIELDS="bcgtuserunitid"/>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="bcgtqualificationid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="bcgtunitid-ind" UNIQUE="false" FIELDS="bcgtunitid"/>
+        <INDEX NAME="bcgttypeawardid-ind" UNIQUE="false" FIELDS="bcgttypeawardid"/>
+        <INDEX NAME="bcgtvalueid-ind" UNIQUE="false" FIELDS="bcgtvalueid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_grid_pref" COMMENT="block_bcgt_grid_pref holds the user preferences for the grids">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="userid-name-ind" UNIQUE="true" FIELDS="userid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_activity_refs" COMMENT="block_bcgt_ass_selection holds the selection of units and criteria associated with an assignment">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="createdby" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="created" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedby" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtprojectid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="coursemoduleid-ind" UNIQUE="false" FIELDS="coursemoduleid" COMMENT="coursemoduleid Index"/>
+        <INDEX NAME="type-ind" UNIQUE="false" FIELDS="type"/>
+        <INDEX NAME="bcgtprojectid-ind" UNIQUE="false" FIELDS="bcgtprojectid"/>
+        <INDEX NAME="bcgtqualid_projectid_ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtprojectid"/>
+        <INDEX NAME="bcgtqualid_unitid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtunitid"/>
+        <INDEX NAME="bcgtqualid_unitid_criteriaid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtunitid, bcgtcriteriaid"/>
+        <INDEX NAME="bcgtqualid_projectid_unitid" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtprojectid, bcgtunitid"/>
+        <INDEX NAME="coursemoduleid_bcgtprojectid-ind" UNIQUE="false" FIELDS="coursemoduleid, bcgtprojectid"/>
+        <INDEX NAME="coursemoduleid_qualid-ind" UNIQUE="false" FIELDS="coursemoduleid, bcgtqualificationid"/>
+        <INDEX NAME="coursemodule_qualid_projectid-ind" UNIQUE="false" FIELDS="coursemoduleid, bcgtqualificationid, bcgtprojectid"/>
+        <INDEX NAME="coursemoduleid_qualid_unitid-ind" UNIQUE="false" FIELDS="coursemoduleid, bcgtqualificationid, bcgtunitid"/>
+        <INDEX NAME="coursemoduleid_qualid_unitid_projectid-ind" UNIQUE="false" FIELDS="coursemoduleid, bcgtqualificationid, bcgtunitid, bcgtprojectid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_logs" COMMENT="block_bcgt_logs holds the logs of the changes to the grids">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="module" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="element" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="log" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="valueid" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="valueid2" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="valueid3" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="module-ind" UNIQUE="false" FIELDS="module"/>
+        <INDEX NAME="element-ind" UNIQUE="false" FIELDS="element"/>
+        <INDEX NAME="studentid-ind" UNIQUE="false" FIELDS="studentid"/>
+        <INDEX NAME="courseid-ind" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_project" COMMENT="block_bcgt_project holds the information on projects">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="250" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetdate" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="centrallymanaged" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="awarded" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="datecreated" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="createdbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateupdated" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="cenrallymanaged-ind" UNIQUE="false" FIELDS="centrallymanaged"/>
+        <INDEX NAME="awarded-ind" UNIQUE="false" FIELDS="awarded"/>
+        <INDEX NAME="centrallymanaged_awarded-ind" UNIQUE="false" FIELDS="centrallymanaged, awarded"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_criteria" COMMENT="block_bcgt_user_criteria holds the criteria values given to the user">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtvalueid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateset" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="setbyuserid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="dateupdated" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtprojectid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userdefinedvalue" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetdate" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetgradesid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetbreakdownid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="flag" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="awarddate" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgtrangeid-fk" TYPE="foreign" FIELDS="bcgtrangeid" REFTABLE="block_bcgt_range" REFFIELDS="id"/>
+        <KEY NAME="bcgtvalueid-fk" TYPE="foreign" FIELDS="bcgtvalueid" REFTABLE="block_bcgt_value" REFFIELDS="id"/>
+        <KEY NAME="bcgtprojectid-fk" TYPE="foreign" FIELDS="bcgtprojectid" REFTABLE="block_bcgt_project" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="userid_qualid-ind" UNIQUE="false" FIELDS="userid, bcgtqualificationid"/>
+        <INDEX NAME="userid_criteriaid-ind" UNIQUE="false" FIELDS="userid, bcgtcriteriaid"/>
+        <INDEX NAME="userid_criteriaid_qualid-ind" UNIQUE="false" FIELDS="userid, bcgtcriteriaid, bcgtqualificationid"/>
+        <INDEX NAME="userid_projectid-ind" UNIQUE="false" FIELDS="userid, bcgtprojectid"/>
+        <INDEX NAME="userid_projectid_criteriaid-ind" UNIQUE="false" FIELDS="userid, bcgtprojectid, bcgtcriteriaid"/>
+        <INDEX NAME="userid_qualid_projectid-ind" UNIQUE="false" FIELDS="userid, bcgtqualificationid, bcgtprojectid"/>
+        <INDEX NAME="userid_qualid_projectid_criteriaid-ind" UNIQUE="false" FIELDS="userid, bcgtqualificationid, bcgtprojectid, bcgtcriteriaid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_criteria_his" COMMENT="block_bcgt_user_criteria_his holds the history of the users criteria values">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtusercriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtvalueid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateset" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="setbyuserid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="dateupdated" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtprojectid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userdefinedvalue" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetdate" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetgradesid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetbreakdownid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="flag" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="awarddate" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="bcgtusercriteriaid-ind" UNIQUE="false" FIELDS="bcgtusercriteriaid"/>
+        <INDEX NAME="bcgtqualificationid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="bcgtcriteriaid-ind" UNIQUE="false" FIELDS="bcgtcriteriaid"/>
+        <INDEX NAME="bcgtrangeid-ind" UNIQUE="false" FIELDS="bcgtrangeid"/>
+        <INDEX NAME="bcgtvalueid-ind" UNIQUE="false" FIELDS="bcgtvalueid"/>
+        <INDEX NAME="bcgtprojectid-ind" UNIQUE="false" FIELDS="bcgtprojectid"/>
+        <INDEX NAME="bcgttargetgradesid-ind" UNIQUE="false" FIELDS="bcgttargetgradesid"/>
+        <INDEX NAME="bcgttargetbreakdownid-ind" UNIQUE="false" FIELDS="bcgttargetbreakdownid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_range_history" COMMENT="block_bcgt_range_history holds the history of ranges">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetdate" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_course_qual" COMMENT="block_bcgt_course_qual links the course with the quals">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-ind" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="courseid-bcgtqualificationid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_target_breakdown" COMMENT="block_bcgt_target_breakdown holds the breakdown of the points scores and target grades">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttargetqualid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetgrade" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ucaspoints" TYPE="number" LENGTH="4" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="unitsscorelower" TYPE="number" LENGTH="6" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="unitsscoreupper" TYPE="number" LENGTH="6" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="ranking" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="entryscoreupper" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="entryscorelower" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="2"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttargetqualid-fk" TYPE="foreign" FIELDS="bcgttargetqualid" REFTABLE="block_bcgt_target_qual" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_target_grades" COMMENT="block_bcgt_target_grades holds the individual target grade points">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttargetqualid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ucaspoints" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="archived" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="upperscore" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="lowerscore" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="umspercentagelower" TYPE="number" LENGTH="4" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="umspercentagehigher" TYPE="number" LENGTH="4" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="ranking" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttargetqualid-fk" TYPE="foreign" FIELDS="bcgttargetqualid" REFTABLE="block_bcgt_target_qual" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgttargetqualid-upperscore-lowerscore-ind" UNIQUE="false" FIELDS="bcgttargetqualid, upperscore, lowerscore"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_award" COMMENT="block_bcgt_user_award holds the award awarded to the student for their qual">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtbreakdownid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetgradesid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="220" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="warning" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="dateupdated" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="overallgrade" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-ind" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="bcgtbreakdownid-ind" UNIQUE="false" FIELDS="bcgtbreakdownid"/>
+        <INDEX NAME="userid_qualid-ind" UNIQUE="false" FIELDS="userid, bcgtqualificationid"/>
+        <INDEX NAME="userid_qualid_type-ind" UNIQUE="false" FIELDS="userid, bcgtqualificationid, type"/>
+        <INDEX NAME="qualid_courseid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, courseid"/>
+        <INDEX NAME="qualid_courseid_type-ind" UNIQUE="false" FIELDS="bcgtqualificationid, courseid, type"/>
+        <INDEX NAME="qualid_userid_courseid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, userid, courseid"/>
+        <INDEX NAME="qualid_userid_courseid_type-ind" UNIQUE="false" FIELDS="bcgtqualificationid, userid, courseid, type"/>
+        <INDEX NAME="type-ind" UNIQUE="false" FIELDS="type"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_range_chart" COMMENT="block_bcgt_range_chart holds the information to generate the ranges charts">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="points" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtrangeid-fk" TYPE="foreign" FIELDS="bcgtrangeid" REFTABLE="block_bcgt_range" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="points" UNIQUE="false" FIELDS="points"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_range_chart_his" COMMENT="block_bcgt_range_chart_his holds the history for range and chart changes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtrangechartid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="points" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="points-ind" UNIQUE="false" FIELDS="points"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_range_criteria" COMMENT="block_bcgt_range_criteria holds the criteria on the range">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="maxpoints" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgtrangeid-fk" TYPE="foreign" FIELDS="bcgtrangeid" REFTABLE="block_bcgt_range" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_range_crit_his" COMMENT="block_bcgt_range_crit_his holds the history of criteria on ranges">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtrangecriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="maxpoints" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_rules" COMMENT="block_bcgt_rules holds the rules that go on units">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="rulename" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ruletype" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="rulecode" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ruledesc" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="rulename-ind" UNIQUE="false" FIELDS="rulename"/>
+        <INDEX NAME="ruletype-ind" UNIQUE="true" FIELDS="ruletype"/>
+        <INDEX NAME="rulecode-ind" UNIQUE="false" FIELDS="rulecode"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_rule_links" COMMENT="block_bcgt_rule_links holds the rules and the links to what qual they are on">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrulesid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgtrulesid-fk" TYPE="foreign" FIELDS="bcgtrulesid" REFTABLE="block_bcgt_rules" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_task" COMMENT="block_bcgt_task holds the tasks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_task_criteria" COMMENT="block_bcgt_task_criteria holds the criteria that are on the tasks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttaskid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttaskid-fk" TYPE="foreign" FIELDS="bcgttaskid" REFTABLE="block_bcgt_task" REFFIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_task_crit_his" COMMENT="block_bcgt_task_crit_his holds the history of any criteria on tasks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttaskcriteriaid" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttaskid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_task_history" COMMENT="block_bcgt_task_history holds the history of tasks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="recordid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_task_points" COMMENT="block_bcgt_task_points holds the points that are associated with tasks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttaskid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pointslower" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="pointsupper" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeawardid-fk" TYPE="foreign" FIELDS="bcgttypeawardid" REFTABLE="block_bcgt_type_award" REFFIELDS="id"/>
+        <KEY NAME="bcgttaskid-fk" TYPE="foreign" FIELDS="bcgttaskid" REFTABLE="block_bcgt_task" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_test" COMMENT="block_bcgt_tests table holds the tests that are associated with units">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="passmark" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_range" COMMENT="block_bcgt_unit_range holds the ranges that each unit has">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+        <KEY NAME="bcgtrangeid-fk" TYPE="foreign" FIELDS="bcgtrangeid" REFTABLE="block_bcgt_range" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_task" COMMENT="block_bcgt_unit_task holds the tasks that each unit can have">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttaskid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+        <KEY NAME="bcgttaskid-fk" TYPE="foreign" FIELDS="bcgttaskid" REFTABLE="block_bcgt_task" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_test" COMMENT="block_bcgt_unit_test holds the tests that each unit can have">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttestid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+        <KEY NAME="bcgttestid-fk" TYPE="foreign" FIELDS="bcgttestid" REFTABLE="block_bcgt_test" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_signoff_sheet" COMMENT="block_bcgt_signoff_sheet holds the sign of seets">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="numofobservations" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtunitid-fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_soff_sheet_ranges" COMMENT="block_bcgt_soff_sheet_ranges holds the ranges and sign off sheets for City and Guild">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtsignoffsheetid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtsignoffsheetid-fk" TYPE="foreign" FIELDS="bcgtsignoffsheetid" REFTABLE="block_bcgt_signoff_sheet" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_crit_range" COMMENT="block_bcgt_user_crit_range holds the values given to the users criteria with the ranges">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtvalueid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+        <KEY NAME="bcgtrangeid-fk" TYPE="foreign" FIELDS="bcgtrangeid" REFTABLE="block_bcgt_range" REFFIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgtvalueid-fk" TYPE="foreign" FIELDS="bcgtvalueid" REFTABLE="block_bcgt_value" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_crit_task" COMMENT="block_bcgt_user_crit_task holds the users criteria values per task">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttaskid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedtime" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgttaskid-fk" TYPE="foreign" FIELDS="bcgttaskid" REFTABLE="block_bcgt_task" REFFIELDS="id"/>
+        <KEY NAME="bcgttypeawardid-fk" TYPE="foreign" FIELDS="bcgttypeawardid" REFTABLE="block_bcgt_type_award" REFFIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_crit_tsk_his" COMMENT="block_bcgt_user_crit_tsk_his holds the users criteria values per task and its history.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtusercrittaskid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttaskid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedtime" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_range" COMMENT="block_bcgt_user_range holds the users values for their ranges">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtvalueid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetdate" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="awarddate" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+        <KEY NAME="bcgtrangeid-fk" TYPE="foreign" FIELDS="bcgtrangeid" REFTABLE="block_bcgt_range" REFFIELDS="id"/>
+        <KEY NAME="vfk" TYPE="foreign" FIELDS="bcgtvalueid" REFTABLE="block_bcgt_value" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_task" COMMENT="block_bcgt_user_task holds the users task values">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttaskid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttaskid-fk" TYPE="foreign" FIELDS="bcgttaskid" REFTABLE="block_bcgt_task" REFFIELDS="id"/>
+        <KEY NAME="bcgttypeawardid-fk" TYPE="foreign" FIELDS="bcgttypeawardid" REFTABLE="block_bcgt_type_award" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="true" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_test" COMMENT="block_bcgt_user_test holds the users test values">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttestid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypeawardid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttestid-fk" TYPE="foreign" FIELDS="bcgttestid" REFTABLE="block_bcgt_test" REFFIELDS="id"/>
+        <KEY NAME="bcgttypeawardid-fk" TYPE="foreign" FIELDS="bcgttypeawardid" REFTABLE="block_bcgt_type_award" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_outcome_obs" COMMENT="block_bcgt_user_outcome_obs holds the observations or the user against their outcomes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtcriteriaid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="observationnum" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="date" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtcriteriaid-fk" TYPE="foreign" FIELDS="bcgtcriteriaid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_settings" COMMENT="block_bcgt_user_settings holds the users settings">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="setting" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="userid-bcgtqualificationid-setting" UNIQUE="false" FIELDS="userid, bcgtqualificationid, setting"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_soff_sht_rgs" COMMENT="block_bcgt_user_soff_sht_rgs holds the information of the users signoff sheet values per range">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtsignoffsheetid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtsignoffrangeid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="observationnum" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="int" LENGTH="18" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtqualificationid-fk" TYPE="foreign" FIELDS="bcgtqualificationid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+        <KEY NAME="bcgtsignoffsheetid-fk" TYPE="foreign" FIELDS="bcgtsignoffsheetid" REFTABLE="block_bcgt_signoff_sheet" REFFIELDS="id"/>
+        <KEY NAME="bcgtsignoffrangeid-fk" TYPE="foreign" FIELDS="bcgtsignoffrangeid" REFTABLE="block_bcgt_soff_sheet_ranges" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_course_trgts" COMMENT="block_bcgt_user_course_trgts holds the users target grade for their courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetbreakdownid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetgradesid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtweightedbreakdownid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtweightedgradeid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttargetbreakdownid-fk" TYPE="foreign" FIELDS="bcgttargetbreakdownid" REFTABLE="block_bcgt_target_breakdown" REFFIELDS="id"/>
+        <KEY NAME="bcgttargetgradesid-fk" TYPE="foreign" FIELDS="bcgttargetgradesid" REFTABLE="block_bcgt_target_grades" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="courseid-ind" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="userid-courseid-ind" UNIQUE="false" FIELDS="userid, courseid"/>
+        <INDEX NAME="bcgttargetbreakdownid-userid-ind" UNIQUE="false" FIELDS="bcgttargetbreakdownid, userid"/>
+        <INDEX NAME="bcgttargetbreakdownid-courseid-ind" UNIQUE="false" FIELDS="bcgttargetbreakdownid, courseid"/>
+        <INDEX NAME="bcgttargetbreakdownid-courseid-userid-ind" UNIQUE="false" FIELDS="bcgttargetbreakdownid, courseid, userid"/>
+        <INDEX NAME="qualid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="courseid_qualid-ind" UNIQUE="false" FIELDS="courseid, bcgtqualificationid"/>
+        <INDEX NAME="userid_qualid-ind" UNIQUE="false" FIELDS="userid, bcgtqualificationid"/>
+        <INDEX NAME="userid_qualid_courseid-ind" UNIQUE="false" FIELDS="userid, courseid, bcgtqualificationid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_prior_qual" COMMENT="block_bcgt_prior_qual holds the prior qual information">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="250" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="quallevel" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="weighting" TYPE="number" LENGTH="3" NOTNULL="true" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="validfrom" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="validto" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="archived" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_prior_qual_grades" COMMENT="block_bcgt_prior_qual_grades holds the prior qual grades">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtpriorqualid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="points" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="archived" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="weighting" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtpriorqualid-fk" TYPE="foreign" FIELDS="bcgtpriorqualid" REFTABLE="block_bcgt_prior_qual" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_subject" COMMENT="block_bcgt_subjects holds the subjects that can be accepted in prior learning">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_prior" COMMENT="block_bcgt_user_prior holds the users prior locked value">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="locked" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="averagegcsescore" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="2"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_prlearn" COMMENT="block_bcgt_user_prlearn holds the students prior learning">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtpriorqualgradesid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtsubjectid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="examdate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="checked" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgtpriorqualgradesid-fk" TYPE="foreign" FIELDS="bcgtpriorqualgradesid" REFTABLE="block_bcgt_prior_qual_grades" REFFIELDS="id"/>
+        <KEY NAME="bcgtsubjectid-fk" TYPE="foreign" FIELDS="bcgtsubjectid" REFTABLE="block_bcgt_subject" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_target" COMMENT="block_bcgt_user_target holds the users target grade and averege score.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="averagescore" TYPE="number" LENGTH="4" NOTNULL="true" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="qualsused" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_tabs" COMMENT="This table conists of the tabs that can possibly be displayed on the dashboard">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="tabname" TYPE="char" LENGTH="240" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="240" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="tabclassfile" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="This is the file that the Tab Class is location in. Please make this relevant to Moodle. i.e. /mod/whatever/bcgttab.class.php or /block/whatever/lib.php (where the lib contains the tab). Rather than /whatever/file.php as the scripts will look from Moodle."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="tabname-ind" UNIQUE="false" FIELDS="tabname"/>
+        <INDEX NAME="component-ind" UNIQUE="false" FIELDS="component"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_assign" COMMENT="When in BCGT the users in here can be assigned managers or mentors of other users.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="assigneeuserid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="roleid-ind" UNIQUE="false" FIELDS="roleid"/>
+        <INDEX NAME="assigneeuserid-ind" UNIQUE="false" FIELDS="assigneeuserid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_target_qual_att" COMMENT="Attributes for the target quals. Such as default number of years, default no of credits. etc">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttargetqualid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="230" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttargetqualid-fk" TYPE="foreign" FIELDS="bcgttargetqualid" REFTABLE="block_bcgt_target_qual" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="bcgttargetqualid-name-ind" UNIQUE="false" FIELDS="bcgttargetqualid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_unit_type_att" COMMENT="This consists of unit type attributes. This is things like default credits at certain levels">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttypeid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtlevelid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttypefamilyid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="230" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bcgttypeid-fk" TYPE="foreign" FIELDS="bcgttypeid" REFTABLE="block_bcgt_type" REFFIELDS="id"/>
+        <KEY NAME="bcgtlevelid-fk" TYPE="foreign" FIELDS="bcgtlevelid" REFTABLE="block_bcgt_level" REFFIELDS="id"/>
+        <KEY NAME="bcgttypefamilyid-fk" TYPE="foreign" FIELDS="bcgttypefamilyid" REFTABLE="block_bcgt_type_family" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgtlevelid-bcgttypefamilyid-name-ind" UNIQUE="false" FIELDS="bcgtlevelid, bcgttypefamilyid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_qual_his" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtuserqualid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="5" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgtuserqualid-ind" UNIQUE="false" FIELDS="bcgtuserqualid"/>
+        <INDEX NAME="bcgtqualificationid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="roleid-ind" UNIQUE="false" FIELDS="roleid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_course_qual_his" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtcoursequalid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-ind" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="bcgtqualificationid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="coursequalid-ind" UNIQUE="false" FIELDS="bcgtcoursequalid"/>
+        <INDEX NAME="courseid_qualid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_plugins" COMMENT="The plugins table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The display title of the plugin"/>
+        <FIELD NAME="version" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_qual_weighting" COMMENT="The plugins table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="coefficient" TYPE="number" LENGTH="4" NOTNULL="false" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="percentage" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="number" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="attribute" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="qualid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="coefficient-ind" UNIQUE="false" FIELDS="coefficient"/>
+        <INDEX NAME="qualid_coefficient-ind" UNIQUE="false" FIELDS="bcgtqualificationid, coefficient"/>
+        <INDEX NAME="percentage" UNIQUE="false" FIELDS="percentage"/>
+        <INDEX NAME="number-ind" UNIQUE="false" FIELDS="number"/>
+        <INDEX NAME="qualid_percentage-ind" UNIQUE="false" FIELDS="bcgtqualificationid, percentage"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bespoke_qual" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtqualid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="displaytype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subtype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="level" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="gradingstructureid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="qid_fk" TYPE="foreign" FIELDS="bcgtqualid" REFTABLE="block_bcgt_qualification" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bspk_qual_grading" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="nm" UNIQUE="false" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bspk_q_grade_vals" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="qualgradingid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="rangelower" TYPE="number" LENGTH="2" NOTNULL="true" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="rangeupper" TYPE="number" LENGTH="2" NOTNULL="true" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="shortgrade" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ucaspoints" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bespoke_unit" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtunitid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="displaytype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="level" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="gradingstructureid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="uid_fk" TYPE="foreign" FIELDS="bcgtunitid" REFTABLE="block_bcgt_unit" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bspk_unit_grading" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bspk_u_grade_vals" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="unitgradingid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shortgrade" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="points" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="rangelower" TYPE="number" LENGTH="2" NOTNULL="true" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="rangeupper" TYPE="number" LENGTH="2" NOTNULL="true" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_activity_ref" COMMENT="This holds the users activity values. E.,g.what values they get for what activities and formal assessments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtactivityrefid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="bcgtvalueid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateset" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="setbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateupdated" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userdefinedvalue" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetgradesid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetbreakdownid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="flag" TYPE="char" LENGTH="250" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgtactivityrefid-ind" UNIQUE="false" FIELDS="bcgtactivityrefid"/>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="bcgtvalueid-ind" UNIQUE="false" FIELDS="bcgtvalueid"/>
+        <INDEX NAME="bcgttargetgradesid" UNIQUE="false" FIELDS="bcgttargetgradesid"/>
+        <INDEX NAME="bcgttargetbreakdownid-ind" UNIQUE="false" FIELDS="bcgttargetbreakdownid"/>
+        <INDEX NAME="userid_bcgtactivityrefid-ind" UNIQUE="false" FIELDS="userid, bcgtactivityrefid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bespoke_criteria" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtcritid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="gradingstructureid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="weighting" TYPE="number" LENGTH="2" NOTNULL="true" DEFAULT="1.0" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="crit" TYPE="foreign" FIELDS="bcgtcritid" REFTABLE="block_bcgt_criteria" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bspk_crit_grading" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="nm" UNIQUE="false" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_bspk_c_grade_vals" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="critgradingid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shortgrade" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="points" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="rangelower" TYPE="number" LENGTH="2" NOTNULL="true" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="rangeupper" TYPE="number" LENGTH="2" NOTNULL="true" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="met" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="img" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="cm" UNIQUE="false" FIELDS="critgradingid, met"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_project_att" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgtprojectid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="240" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="240" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="bcgtprojectid-ind" UNIQUE="false" FIELDS="bcgtprojectid"/>
+        <INDEX NAME="name-ind" UNIQUE="false" FIELDS="name"/>
+        <INDEX NAME="bcgtprojectid_name-ind" UNIQUE="false" FIELDS="bcgtprojectid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_custom_grades" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ranking" TYPE="number" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="ucaspoints" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_stud_course_grade" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="qualid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="recordid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="setbyuserid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="settime" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="location" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_settings" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="setting" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_repsys_reports" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="createdbyuserid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedbyuserid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timeupdated" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lastrunbyuserid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timelastrun" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="runs" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="data" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="del" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="cbuid_fk" TYPE="foreign" FIELDS="createdbyuserid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="pbuid_fk" TYPE="foreign" FIELDS="updatedbyuserid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="lrbuid_fk" TYPE="foreign" FIELDS="lastrunbyuserid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_grouping" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="groupingid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="courseid-ind" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="groupingid-ind" UNIQUE="false" FIELDS="groupingid"/>
+        <INDEX NAME="userid_courseid_ind" UNIQUE="false" FIELDS="userid, courseid"/>
+        <INDEX NAME="userid_groupingid_ind" UNIQUE="false" FIELDS="userid, groupingid"/>
+        <INDEX NAME="courseid_groupingid_ind" UNIQUE="false" FIELDS="courseid, groupingid"/>
+        <INDEX NAME="userid_courseid_groupingid_ind" UNIQUE="false" FIELDS="userid, courseid, groupingid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_mod_linking" COMMENT="This is the table that contains the mods we support the auto linking and due dates for. Please note that bcgt will allow the linking of Grade Tracker with ANY gradeable mod.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="moduleid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false" COMMENT="The is the id of the module from modules."/>
+        <FIELD NAME="modtablename" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="This is the name of the modules table. E.g. assign would be assign, assignment is assignment, turnitin is turnitintool . Therefore its not always consistant."/>
+        <FIELD NAME="modtablecoursefname" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="This is the course field name in the mod table. For example it may be courseid or it may be course. This is the course that the module has been added to."/>
+        <FIELD NAME="modtablestartdatefname" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="modtableduedatefname" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="This is the optional field name of the due date column in the mod table. E.g what are we querying to find the due date of a module. TimeDue, Date due, due date etc. Not all mods will have this."/>
+        <FIELD NAME="modsubmissiontable" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="This is the name of the table that we are looking to see about the submissions or attempts of the module. E.g. for assign its assign_submssions."/>
+        <FIELD NAME="modtitlefname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="submissionuserfname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="This is the name of the column where the userid is stored in the modules submission table. E.g. is it user or is it userid."/>
+        <FIELD NAME="submissiondatefname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="This is the name of the column where we find what date the submission was made/attempted. e,g. datecreated, datesubmitted."/>
+        <FIELD NAME="submissionmodidfname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="This is the name of the column where we will find the id of the module instance from the module table associated with this submission. E.g. in assign_submission the module instance id is found in the column assignment."/>
+        <FIELD NAME="checkforautotracking" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="This denotes if we are going to check and alter the tracking sheets that are linked to these mods for the values of IN, NOT IN and LATE."/>
+        <FIELD NAME="gradetablename" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="gradetimefname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="gradegradefname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="grademodinstancefname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="modgradingscalefname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="gradeuserfname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_alps_scores" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtqualificationid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtprojectid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgttargetqualid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bcgtfamilyid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="groupingid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="gradescore" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="gradecoef" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="3"/>
+        <FIELD NAME="cetascore" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="cetacoef" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="3"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-ind" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="qualid-ind" UNIQUE="false" FIELDS="bcgtqualificationid"/>
+        <INDEX NAME="projectid-ind" UNIQUE="false" FIELDS="bcgtprojectid"/>
+        <INDEX NAME="targetqual-ind" UNIQUE="false" FIELDS="bcgttargetqualid"/>
+        <INDEX NAME="familyid-ind" UNIQUE="false" FIELDS="bcgtfamilyid"/>
+        <INDEX NAME="categoryid-ind" UNIQUE="false" FIELDS="categoryid"/>
+        <INDEX NAME="userid-qualid-ind" UNIQUE="false" FIELDS="userid, bcgtqualificationid"/>
+        <INDEX NAME="userid-projectid-ind" UNIQUE="false" FIELDS="userid, bcgtprojectid"/>
+        <INDEX NAME="qualid-projectid-ind" UNIQUE="false" FIELDS="bcgtqualificationid, bcgtprojectid"/>
+        <INDEX NAME="projectid-targetqual-ind" UNIQUE="false" FIELDS="bcgtprojectid, bcgttargetqualid"/>
+        <INDEX NAME="projectid-familyid-ind" UNIQUE="false" FIELDS="bcgtprojectid, bcgtfamilyid"/>
+        <INDEX NAME="projectid-categoryid-ind" UNIQUE="false" FIELDS="bcgtprojectid, categoryid"/>
+        <INDEX NAME="groupingid-ind" UNIQUE="false" FIELDS="groupingid"/>
+        <INDEX NAME="grouping_qual-ind" UNIQUE="false" FIELDS="groupingid, bcgtqualificationid"/>
+        <INDEX NAME="grouping_proj-ind" UNIQUE="false" FIELDS="groupingid, bcgtprojectid"/>
+        <INDEX NAME="grouping_proj_qual-ind" UNIQUE="false" FIELDS="groupingid, bcgtqualificationid, bcgtprojectid"/>
+        <INDEX NAME="courseid-ind" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="courseid-project-ind" UNIQUE="false" FIELDS="courseid, bcgtprojectid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_register_groups" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="recordid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="startdate" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="enddate" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="starttime" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="endtime" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_user_reg_groups" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="registergroupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="T = Teacher/Tutor L = Learner"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_bcgt_tqual_weight" COMMENT="The plugins table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="bcgttargetqualid" TYPE="int" LENGTH="18" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="coefficient" TYPE="number" LENGTH="4" NOTNULL="false" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="percentage" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
+        <FIELD NAME="number" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="attribute" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="targetqualid-ind" UNIQUE="false" FIELDS="bcgttargetqualid"/>
+        <INDEX NAME="coefficient-ind" UNIQUE="false" FIELDS="coefficient"/>
+        <INDEX NAME="targetqualid_coefficient-ind" UNIQUE="false" FIELDS="bcgttargetqualid, coefficient"/>
+        <INDEX NAME="percentage" UNIQUE="false" FIELDS="percentage"/>
+        <INDEX NAME="number-ind" UNIQUE="false" FIELDS="number"/>
+        <INDEX NAME="targetqualid_percentage-ind" UNIQUE="false" FIELDS="bcgttargetqualid, percentage"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_bcgt_archive" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="componentid" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false" COMMENT="This could be the userid, the qualid, projectid etc etc"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="18" NOTNULL="false" SEQUENCE="false" COMMENT="This is an INT number. What it corresponds to, as in the the english type, can be found as a Constant on the Archive class. This has been done as an INT to speed up querying"/>
+        <FIELD NAME="archive" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="componentid-ind" UNIQUE="false" FIELDS="componentid"/>
+        <INDEX NAME="type-ind" UNIQUE="false" FIELDS="type"/>
+        <INDEX NAME="type-componentid-ind" UNIQUE="false" FIELDS="componentid,type"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
